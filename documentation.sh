@@ -1,0 +1,1 @@
+open ./documentation/index.html

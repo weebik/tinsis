@@ -5,25 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Enemy object class
+ */
 public class Tie extends Sprite {
-    private static final int TIE_SPEED = 2;
-    private final int COOLDOWN = 500;
+    private int TIE_SPEED = Commons.TIE_SPEED;
+    private int TIE_COOLDOWN = Commons.TIE_COOLDOWN;
     private long lastShotTime = 0;
     private int dx;
     private int dy;
     private List<TieLaser> lasers;
 
+    /**
+     * Initialize enemy object with position (x, y)
+     * 
+     * @param x position x
+     * @param y position y
+     */
     public Tie(int x, int y) {
         super(x, y);
         initTie();
     }
 
-    private void initTie() {
-        lasers = new ArrayList<>();
-        loadImage("src/resources/tiefighter.png");
-        getImageDimensions();
-    }
-
+    /**
+     * Randomly transforms enemies positions
+     */
     public void move() {
         Random rand = new Random();
         int randNum = rand.nextInt(50);
@@ -57,19 +63,39 @@ public class Tie extends Sprite {
         }
     }
 
+    /**
+     * @return List of enemy lasers
+     */
     public List<TieLaser> getLasers() {
         return lasers;
     }
 
+    /**
+     * Fires enemy lasers
+     */
     public void fire() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastShotTime > COOLDOWN) {
+        if (currentTime - lastShotTime > TIE_COOLDOWN) {
             lastShotTime = currentTime;
             lasers.add(new TieLaser(x + (width / 2) - 4, y));
         }
     }
 
+    /**
+     * Get bounds of enemy spaceship
+     * 
+     * @return Rectangle that represents bounds of object
+     */
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
+    }
+
+    /**
+     * Initialize Enemies image
+     */
+    private void initTie() {
+        lasers = new ArrayList<>();
+        loadImage("src/resources/tiefighter.png");
+        getImageDimensions();
     }
 }

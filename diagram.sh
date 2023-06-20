@@ -1,0 +1,1 @@
+open ./diagram/Diagram.png
