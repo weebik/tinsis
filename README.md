@@ -117,7 +117,7 @@ Your ideas on how to improve the project are always welcome! Feel free to:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## License
-This projects uses **MIT License.** Read more at [LICENSE]()
+This projects uses **MIT License.** Read more at [LICENSE](https://github.com/weebik/tinsis/blob/master/LICENSE.txt). </br>
 **Assets do not belong to me** and aren't covered by license.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -152,4 +152,4 @@ Project Link: [https://github.com/weebik/Tinsis](https://github.com/weebik/Tinsi
 [license-shield]: https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge
 [license-url]: https://img.shields.io/github/license/weebik/Tinsis%2Ffrontend%2FLICENSE.TXT
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/weebik
+[linkedin-url]: https://www.linkedin.com/in/weebik/
