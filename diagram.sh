@@ -1,1 +1,0 @@
-open ./diagram/Diagram.png
