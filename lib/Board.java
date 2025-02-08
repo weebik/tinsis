@@ -27,10 +27,12 @@ public class Board extends JPanel implements ActionListener, KeyListener {
     private int WINDOW_WIDTH = Commons.WINDOW_WIDTH;
     private int START_POS_X = Commons.START_POS_X;
     private int START_POS_Y = Commons.START_POS_Y;
+    private int score = Commons.score;
     private int DELAY = Commons.DELAY;
     private Timer timer;
     private Xwing xwing;
     private List<Tie> tiefighters;
+    private List<TieLaser> tieLasers = new ArrayList<>();
     private boolean gameEnded = false;
 
     /**
@@ -84,6 +86,7 @@ public class Board extends JPanel implements ActionListener, KeyListener {
      */
     private void endGame() {
         gameEnded = true;
+        timer.stop();
         repaint();
     }
 
@@ -101,6 +104,7 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 
         xwing = new Xwing(START_POS_X, START_POS_Y);
         tiefighters = new ArrayList<>();
+        tieLasers = new ArrayList<>();
 
         timer = new Timer(DELAY, this);
         timer.start();
@@ -117,7 +121,9 @@ public class Board extends JPanel implements ActionListener, KeyListener {
         for (int i = 0; i < 15; i++) {
             int x = rand.nextInt(getWidth());
             int y = rand.nextInt(getHeight());
-            g2d.drawLine(x, y, x, y + 25);
+            Random rand2 = new Random();
+            int lenght = rand2.nextInt(15, 50);
+            g2d.drawLine(x, y, x, y + lenght);
         }
     }
 
@@ -129,14 +135,22 @@ public class Board extends JPanel implements ActionListener, KeyListener {
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("RetroGame", Font.PLAIN, 15));
+        String scoreText = "Score: " + score;
+        int scoreX = 10;
+        int scoreY = 20;
+        g.drawString(scoreText, scoreX, scoreY);
+
         drawStars(g2d);
 
         g2d.drawImage(xwing.getImage(), xwing.getX(), xwing.getY(), this);
         for (Tie tie : tiefighters) {
             g2d.drawImage(tie.getImage(), tie.getX(), tie.getY(), this);
-            for (TieLaser laser : tie.getLasers()) {
-                if (laser.isVisible())
-                    g2d.drawImage(laser.getImage(), laser.getX(), laser.getY(), this);
+        }
+        for (TieLaser laser : tieLasers) {
+            if (laser.isVisible()) {
+                g2d.drawImage(laser.getImage(), laser.getX(), laser.getY(), this);
             }
         }
 
@@ -150,26 +164,25 @@ public class Board extends JPanel implements ActionListener, KeyListener {
      */
     private void updateLasers() {
         List<XwingLaser> xwingLasers = xwing.getLasers();
-        List<TieLaser> tieLasers = new ArrayList<>();
 
-        for (int i = 0; i < xwingLasers.size(); i++) {
-            XwingLaser xwingLaser = xwingLasers.get(i);
-            if (xwingLaser.isVisible())
+        Iterator<XwingLaser> xwingLaserIterator = xwingLasers.iterator();
+        while (xwingLaserIterator.hasNext()) {
+            XwingLaser xwingLaser = xwingLaserIterator.next();
+            if (xwingLaser.isVisible()) {
                 xwingLaser.move();
-            else
-                xwingLasers.remove(i);
+            } else {
+                xwingLaserIterator.remove();
+            }
         }
 
-        for (Tie tie : tiefighters) {
-            for (int i = 0; i < tie.getLasers().size(); i++) {
-                TieLaser laser = tie.getLasers().get(i);
-                if (laser.isVisible())
-                    laser.move();
-                else
-                    tieLasers.add(laser);
+        Iterator<TieLaser> tieLaserIterator = tieLasers.iterator();
+        while (tieLaserIterator.hasNext()) {
+            TieLaser tieLaser = tieLaserIterator.next();
+            if (tieLaser.isVisible()) {
+                tieLaser.move();
+            } else {
+                tieLaserIterator.remove();
             }
-            tie.getLasers().removeAll(tieLasers);
-            tieLasers.clear();
         }
     }
 
@@ -185,17 +198,21 @@ public class Board extends JPanel implements ActionListener, KeyListener {
      */
     private void updateTies() {
         Random rand = new Random();
-        if (rand.nextInt(1000) < 10 && tiefighters.size() < 5)
+        if (rand.nextInt(1000) < 10 && tiefighters.size() < 5) {
             tiefighters.add(new Tie(rand.nextInt(getWidth()), 0));
+        }
 
-        for (Tie tie : tiefighters) {
-            if (tie.isVisible())
+        Iterator<Tie> iterator = tiefighters.iterator();
+        while (iterator.hasNext()) {
+            Tie tie = iterator.next();
+            if (tie.isVisible()) {
                 tie.move();
-            else
-                tiefighters.remove(tie);
-
-            if (rand.nextInt(1000) < 10)
-                tie.fire();
+                if (rand.nextInt(1000) < 10) {
+                    tie.fire(tieLasers);
+                }
+            } else {
+                iterator.remove();
+            }
         }
     }
 
@@ -205,13 +222,12 @@ public class Board extends JPanel implements ActionListener, KeyListener {
     private void checkCollision() {
         Rectangle xwingBounds = xwing.getBounds();
 
-        for (Tie tie : tiefighters) {
-            for (TieLaser laser : tie.getLasers()) {
-                Rectangle laserBounds = laser.getBounds();
-                if (xwingBounds.intersects(laserBounds)) {
-                    endGame();
-                    return;
-                }
+        Iterator<TieLaser> tieLaserIterator = tieLasers.iterator();
+        while (tieLaserIterator.hasNext()) {
+            TieLaser laser = tieLaserIterator.next();
+            if (xwingBounds.intersects(laser.getBounds())) {
+                endGame();
+                return;
             }
         }
 
@@ -224,12 +240,11 @@ public class Board extends JPanel implements ActionListener, KeyListener {
                 return;
             }
 
-            List<XwingLaser> lasers = xwing.getLasers();
-            Iterator<XwingLaser> laserIterator = lasers.iterator();
+            Iterator<XwingLaser> laserIterator = xwing.getLasers().iterator();
             while (laserIterator.hasNext()) {
                 XwingLaser laser = laserIterator.next();
-                Rectangle laserBounds = laser.getBounds();
-                if (laserBounds.intersects(tieBounds)) {
+                if (laser.getBounds().intersects(tieBounds)) {
+                    score += 10;
                     laserIterator.remove();
                     iterator.remove();
                     break;
@@ -246,20 +261,29 @@ public class Board extends JPanel implements ActionListener, KeyListener {
     private void drawGameOverScreen(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
+        FontMetrics fontMetrics = g.getFontMetrics();
 
         g.setColor(Color.WHITE);
+
         g.setFont(new Font("RetroGame", Font.BOLD, 40));
-        FontMetrics fontMetrics = g.getFontMetrics();
+        fontMetrics = g.getFontMetrics();
         String gameOverText = "GAME OVER";
         int gameOverX = (getWidth() - fontMetrics.stringWidth(gameOverText)) / 2;
         int gameOverY = (getHeight() - fontMetrics.getHeight()) / 2;
         g.drawString(gameOverText, gameOverX, gameOverY);
 
+        g.setFont(new Font("RetroGame", Font.BOLD, 20));
+        fontMetrics = g.getFontMetrics();
+        String score = "Your score: " + this.score;
+        int scoreX = (getWidth() - fontMetrics.stringWidth(score)) / 2;
+        int scoreY = (getHeight() - fontMetrics.getHeight()) / 2 + 20;
+        g.drawString(score, scoreX, scoreY);
+
         g.setFont(new Font("Arial", Font.PLAIN, 20));
         fontMetrics = g.getFontMetrics();
         String restartText = "PRESS [R] TO RESTART OR [Q] TO QUIT";
         int restartX = (getWidth() - fontMetrics.stringWidth(restartText)) / 2;
-        int restartY = gameOverY + fontMetrics.getHeight() + 20;
+        int restartY = gameOverY + fontMetrics.getHeight() + 50;
         g.drawString(restartText, restartX, restartY);
     }
 
@@ -267,10 +291,13 @@ public class Board extends JPanel implements ActionListener, KeyListener {
      * Restarts game, sets everything to default value
      */
     private void restartGame() {
+        score = 0;
         xwing = new Xwing(START_POS_X, START_POS_Y);
         tiefighters.clear();
+        tieLasers.clear();
         timer.restart();
         gameEnded = false;
+        timer.start();
         repaint();
     }
 }

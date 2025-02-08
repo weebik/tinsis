@@ -73,11 +73,11 @@ public class Tie extends Sprite {
     /**
      * Fires enemy lasers
      */
-    public void fire() {
+    public void fire(List<TieLaser> tieLasers) {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastShotTime > TIE_COOLDOWN) {
             lastShotTime = currentTime;
-            lasers.add(new TieLaser(x + (width / 2) - 4, y));
+            tieLasers.add(new TieLaser(x + (width / 2) - 4, y));
         }
     }
 
@@ -95,7 +95,7 @@ public class Tie extends Sprite {
      */
     private void initTie() {
         lasers = new ArrayList<>();
-        loadImage("src/resources/tiefighter.png");
+        loadImage("src/assets/tiefighter.png");
         getImageDimensions();
     }
 }

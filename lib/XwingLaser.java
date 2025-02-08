@@ -41,7 +41,7 @@ public class XwingLaser extends Sprite {
      * Initialize Player's Laser image
      */
     private void initLaser() {
-        loadImage("src/resources/laserXwing.png");
+        loadImage("src/assets/laserXwing.png");
         getImageDimensions();
     }
 }

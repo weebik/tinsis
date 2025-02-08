@@ -122,7 +122,7 @@ public class Xwing extends Sprite {
      */
     private void initXwing() {
         lasers = new ArrayList<>();
-        loadImage("src/resources/xwing.png");
+        loadImage("src/assets/xwing.png");
         getImageDimensions();
     }
 }

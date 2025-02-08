@@ -14,7 +14,8 @@ public class Commons {
     public static final int TIE_COOLDOWN = 500;
     public static final int TIE_LASER_SPEED = 4;
 
-    public static final int XWING_SPEED = 3;
+    public static final int XWING_SPEED = 5;
     public static final int XWING_COOLDOWN = 300;
     public static final int XWING_LASER_SPEED = 7;
+    public static final int score = 0;
 }

@@ -41,7 +41,7 @@ public class TieLaser extends Sprite {
      * Initialize enemy's laser image
      */
     private void initLaser() {
-        loadImage("src/resources/laserTie.png");
+        loadImage("src/assets/laserTie.png");
         getImageDimensions();
     }
 }
